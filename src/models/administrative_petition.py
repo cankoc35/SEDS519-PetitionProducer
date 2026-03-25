@@ -9,4 +9,6 @@ from .petition import Petition
 class AdministrativePetition(Petition):
     """Petition type for administrative requests."""
 
+    petition_type: str = "administrative"
     receiver: str = "Administrative Office"
+    attachment_required: bool = False
