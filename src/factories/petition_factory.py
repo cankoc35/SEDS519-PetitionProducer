@@ -11,6 +11,14 @@ class PetitionFactory(ABC):
     """Base class for concrete petition factories."""
 
     @abstractmethod
-    def create_petition(self, title: str, body: str, petitioner: str) -> Petition:
+    def create_petition(
+        self,
+        title: str,
+        body: str,
+        petitioner: str,
+        created_by: str,
+        status: str = "draft",
+        attachments: list[str] | None = None,
+    ) -> Petition:
         """Create and return a petition object."""
         raise NotImplementedError

@@ -13,6 +13,7 @@ class Petition:
     title: str
     body: str
     petitioner: str
+    created_by: str 
     status: str = "draft"
     attachment_required: bool = False
     attachments: list[str] = field(default_factory=list)
