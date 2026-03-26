@@ -1,0 +1,2 @@
+# External dependency for the planned desktop GUI.
+flet
