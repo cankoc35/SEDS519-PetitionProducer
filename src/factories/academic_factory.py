@@ -1,5 +1,7 @@
 """Factory for academic petitions."""
 
+from __future__ import annotations
+
 from models.academic_petition import AcademicPetition
 
 from .petition_factory import PetitionFactory

@@ -1,0 +1,13 @@
+{
+  "title": "Make-Up Exam Request",
+  "body": "I request a make-up exam because I missed the midterm due to illness.",
+  "petitioner": "Ayse Yilmaz",
+  "created_by": "ayse",
+  "status": "draft",
+  "attachment_required": false,
+  "attachments": [
+    "medical_report.pdf"
+  ],
+  "petition_type": "academic",
+  "receiver": "Dean"
+}

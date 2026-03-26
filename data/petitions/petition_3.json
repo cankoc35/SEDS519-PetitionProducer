@@ -1,0 +1,13 @@
+{
+  "title": "Course Exemption Request",
+  "body": "I request exemption from the introductory programming course.",
+  "petitioner": "Ayse Yilmaz",
+  "created_by": "ayse",
+  "status": "draft",
+  "attachment_required": false,
+  "attachments": [
+    "medical_report.pdf"
+  ],
+  "petition_type": "academic",
+  "receiver": "Dean"
+}
