@@ -55,3 +55,30 @@ def build_template_section(
             ),
         ),
     )
+
+
+def build_saved_petitions_section(saved_petitions_column: ft.Column) -> ft.Card:
+    """Build a card that displays saved petitions from the registry."""
+    return ft.Card(
+        elevation=1,
+        content=ft.Container(
+            padding=20,
+            content=ft.Column(
+                spacing=12,
+                controls=[
+                    ft.Row(
+                        spacing=10,
+                        controls=[
+                            ft.Icon(ft.Icons.FOLDER_OPEN_OUTLINED, size=22),
+                            ft.Text("Saved Petitions", size=22, weight=ft.FontWeight.W_600),
+                        ],
+                    ),
+                    ft.Text(
+                        "These petitions were loaded from JSON storage and saved through the registry.",
+                        color=ft.Colors.ON_SURFACE_VARIANT,
+                    ),
+                    saved_petitions_column,
+                ],
+            ),
+        ),
+    )

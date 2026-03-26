@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import flet as ft
 
+from iterators.petition_iterator import PetitionIterator
 from registry.petition_registry import PetitionRegistry
 from templates.petition_templates import get_template_catalog
 from utils.validators import is_valid_petition
 
-from .forms import build_template_section
+from .forms import build_saved_petitions_section, build_template_section
 
 
 class PetitionApp:
@@ -27,6 +28,7 @@ class PetitionApp:
         page.title = "Petition Producer"
         page.theme_mode = ft.ThemeMode.LIGHT
         page.padding = 24
+        page.scroll = ft.ScrollMode.AUTO
         page.bgcolor = ft.Colors.BLUE_GREY_50
         page.window.width = 1180
         page.window.height = 760
@@ -36,6 +38,74 @@ class PetitionApp:
         def show_snack(message: str) -> None:
             snack_bar = ft.SnackBar(ft.Text(message))
             page.open(snack_bar)
+
+        def build_saved_petition_tile(petition: object) -> ft.ListTile:
+            petition_type = getattr(petition, "petition_type", "petition").title()
+            receiver = getattr(petition, "receiver", "-")
+            subtitle = (
+                f"Type: {petition_type} | Status: {petition.status} | "
+                f"Petitioner: {petition.petitioner or '-'} | Receiver: {receiver}"
+            )
+            return ft.ListTile(
+                adaptive=True,
+                leading=ft.Icon(ft.Icons.DESCRIPTION_ROUNDED),
+                title=ft.Text(petition.title),
+                subtitle=ft.Text(subtitle),
+                trailing=ft.Text(
+                    petition.status.title(),
+                    weight=ft.FontWeight.W_600,
+                    color=ft.Colors.BLUE_GREY_700,
+                ),
+                bgcolor=ft.Colors.WHITE,
+                shape=ft.RoundedRectangleBorder(radius=12),
+            )
+
+        saved_petitions_column = ft.Column(spacing=8)
+        type_filter = ft.Dropdown(
+            label="Type Filter",
+            width=220,
+            value="all",
+            options=[
+                ft.dropdown.Option("all", "All Types"),
+                ft.dropdown.Option("academic", "Academic"),
+                ft.dropdown.Option("administrative", "Administrative"),
+            ],
+        )
+        status_filter = ft.Dropdown(
+            label="Status Filter",
+            width=220,
+            value="all",
+            options=[
+                ft.dropdown.Option("all", "All Statuses"),
+                ft.dropdown.Option("draft", "Draft"),
+                ft.dropdown.Option("registered", "Registered"),
+            ],
+        )
+
+        def refresh_saved_petitions_list() -> None:
+            petition_type = None if type_filter.value == "all" else type_filter.value
+            status = None if status_filter.value == "all" else status_filter.value
+            petitions = list(
+                PetitionIterator(
+                    registry.get_all_petitions(),
+                    petition_type=petition_type,
+                    status=status,
+                )
+            )
+            if petitions:
+                saved_petitions_column.controls = [
+                    build_saved_petition_tile(petition) for petition in petitions
+                ]
+            else:
+                saved_petitions_column.controls = [
+                    ft.Container(
+                        bgcolor=ft.Colors.WHITE,
+                        border_radius=12,
+                        padding=16,
+                        content=ft.Text("No saved petitions yet."),
+                    )
+                ]
+            page.update()
 
         def refresh_saved_count() -> None:
             saved_count_text.value = f"{len(registry.get_all_petitions())} saved petitions"
@@ -124,6 +194,7 @@ class PetitionApp:
                     show_snack(f'"{petition.title}" was saved as draft.')
 
                 refresh_saved_count()
+                refresh_saved_petitions_list()
                 close_dialog(dialog)
 
             def pick_attachments(_: ft.ControlEvent) -> None:
@@ -188,6 +259,9 @@ class PetitionApp:
             f"{len(registry.get_all_petitions())} saved petitions",
             weight=ft.FontWeight.W_600,
         )
+        type_filter.on_change = lambda _: refresh_saved_petitions_list()
+        status_filter.on_change = lambda _: refresh_saved_petitions_list()
+        refresh_saved_petitions_list()
 
         header = ft.Container(
             padding=ft.padding.only(bottom=16),
@@ -253,4 +327,18 @@ class PetitionApp:
             ],
         )
 
-        page.add(header, template_layout)
+        saved_petitions_section = build_saved_petitions_section(
+            ft.Column(
+                spacing=12,
+                controls=[
+                    ft.Row(
+                        wrap=True,
+                        spacing=12,
+                        controls=[type_filter, status_filter],
+                    ),
+                    saved_petitions_column,
+                ],
+            )
+        )
+
+        page.add(header, template_layout, saved_petitions_section)
