@@ -1,2 +1,2 @@
 # External dependency for the planned desktop GUI.
-flet
+flet==0.28.2

@@ -137,6 +137,10 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+Note:
+
+- `flet` is pinned to `0.28.2` because `0.28.3` has a macOS `FilePicker` issue that prevents the native file selection dialog from opening reliably in this project setup.
+
 Check that the virtual environment Python is active:
 
 ```bash

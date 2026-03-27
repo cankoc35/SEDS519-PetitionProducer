@@ -20,15 +20,15 @@ class PetitionApp:
         ft.app(target=self.main)
 
     def main(self, page: ft.Page) -> None:
-        """Configure and render the first petition template screen."""
+        """Configure and render petition views."""
         registry = PetitionRegistry()
         template_catalog = get_template_catalog()
-        attachment_state: dict[str, object | None] = {"petition": None, "label": None}
+        current_petition: dict[str, object | None] = {"value": None}
+        current_template_title: dict[str, str] = {"value": "No template selected."}
 
         page.title = "Petition Producer"
         page.theme_mode = ft.ThemeMode.LIGHT
-        page.padding = 24
-        page.scroll = ft.ScrollMode.AUTO
+        page.padding = 0
         page.bgcolor = ft.Colors.BLUE_GREY_50
         page.window.width = 1180
         page.window.height = 760
@@ -36,8 +36,119 @@ class PetitionApp:
         page.window.min_height = 640
 
         def show_snack(message: str) -> None:
-            snack_bar = ft.SnackBar(ft.Text(message))
-            page.open(snack_bar)
+            page.open(ft.SnackBar(ft.Text(message)))
+
+        title_field = ft.TextField(label="Title")
+        body_field = ft.TextField(
+            label="Body",
+            multiline=True,
+            min_lines=8,
+            max_lines=12,
+        )
+        petitioner_field = ft.TextField(label="Petitioner Name")
+        receiver_field = ft.TextField(label="Receiver")
+        created_by_field = ft.TextField(label="Created By / Username")
+        attachments_label = ft.Text("No attachments selected.")
+
+        def sync_form_to_petition() -> object | None:
+            petition = current_petition["value"]
+            if petition is None:
+                return None
+            petition.title = title_field.value or ""
+            petition.body = body_field.value or ""
+            petition.petitioner = petitioner_field.value or ""
+            petition.receiver = receiver_field.value or ""
+            petition.created_by = created_by_field.value or ""
+            return petition
+
+        def clear_editor() -> None:
+            current_petition["value"] = None
+            current_template_title["value"] = "No template selected."
+            title_field.value = ""
+            body_field.value = ""
+            petitioner_field.value = ""
+            receiver_field.value = ""
+            created_by_field.value = ""
+            attachments_label.value = "No attachments selected."
+
+        def handle_files_picked(event: ft.FilePickerResultEvent) -> None:
+            petition = current_petition["value"]
+            if petition is None:
+                return
+
+            selected_files = event.files or []
+            petition.attachments = [
+                getattr(file, "path", None) or getattr(file, "name", "")
+                for file in selected_files
+            ]
+            file_names = [getattr(file, "name", "attachment") for file in selected_files]
+            attachments_label.value = (
+                ", ".join(file_names) if file_names else "No attachments selected."
+            )
+            page.update()
+
+        file_picker = ft.FilePicker(on_result=handle_files_picked)
+        page.overlay.append(file_picker)
+
+        def pick_attachments(_: ft.ControlEvent) -> None:
+            if current_petition["value"] is None:
+                show_snack("Please select a template first.")
+                return
+            show_snack("Opening file picker...")
+            file_picker.pick_files(
+                dialog_title="Select petition attachments",
+                allow_multiple=True,
+            )
+
+        def save_current_petition(status: str) -> None:
+            petition = sync_form_to_petition()
+            if petition is None:
+                show_snack("Please select a template first.")
+                return
+            if not petition.petitioner.strip() or not petition.created_by.strip():
+                show_snack("Petitioner name and username are required.")
+                return
+            if not is_valid_petition(petition):
+                show_snack("Petition body cannot be empty. Add attachments if required.")
+                return
+
+            if status == "registered":
+                registry.register_petition(petition)
+                show_snack(f'"{petition.title}" was registered successfully.')
+            else:
+                petition.status = "draft"
+                registry.add_petition(petition)
+                show_snack(f'"{petition.title}" was saved as draft.')
+
+            clear_editor()
+            page.go("/")
+
+        def start_template_edit(event: ft.ControlEvent) -> None:
+            template = getattr(event.control, "data", None)
+            if template is None:
+                show_snack("Template selection failed. Please try again.")
+                return
+
+            petition = template.clone()
+            petition.status = "draft"
+            if petition.petitioner == "[Student Name]":
+                petition.petitioner = ""
+            if petition.created_by == "system":
+                petition.created_by = ""
+
+            current_petition["value"] = petition
+            current_template_title["value"] = template.title
+            title_field.value = petition.title
+            body_field.value = petition.body
+            petitioner_field.value = petition.petitioner
+            receiver_field.value = getattr(petition, "receiver", "")
+            created_by_field.value = petition.created_by
+            attachments_label.value = (
+                ", ".join(petition.attachments)
+                if petition.attachments
+                else "No attachments selected."
+            )
+            page.go("/edit")
 
         def build_saved_petition_tile(petition: object) -> ft.ListTile:
             petition_type = getattr(petition, "petition_type", "petition").title()
@@ -60,7 +171,6 @@ class PetitionApp:
                 shape=ft.RoundedRectangleBorder(radius=12),
             )
 
-        saved_petitions_column = ft.Column(spacing=8)
         type_filter = ft.Dropdown(
             label="Type Filter",
             width=220,
@@ -82,7 +192,7 @@ class PetitionApp:
             ],
         )
 
-        def refresh_saved_petitions_list() -> None:
+        def build_saved_petitions_content() -> ft.Column:
             petition_type = None if type_filter.value == "all" else type_filter.value
             status = None if status_filter.value == "all" else status_filter.value
             petitions = list(
@@ -93,11 +203,9 @@ class PetitionApp:
                 )
             )
             if petitions:
-                saved_petitions_column.controls = [
-                    build_saved_petition_tile(petition) for petition in petitions
-                ]
+                controls = [build_saved_petition_tile(petition) for petition in petitions]
             else:
-                saved_petitions_column.controls = [
+                controls = [
                     ft.Container(
                         bgcolor=ft.Colors.WHITE,
                         border_radius=12,
@@ -105,240 +213,198 @@ class PetitionApp:
                         content=ft.Text("No saved petitions yet."),
                     )
                 ]
-            page.update()
+            return ft.Column(spacing=8, controls=controls)
 
-        def refresh_saved_count() -> None:
-            saved_count_text.value = f"{len(registry.get_all_petitions())} saved petitions"
-
-        def close_dialog(dialog: ft.AlertDialog) -> None:
-            page.close(dialog)
-
-        def handle_files_picked(event: ft.FilePickerResultEvent) -> None:
-            petition = attachment_state["petition"]
-            label = attachment_state["label"]
-            if petition is None or label is None:
-                return
-
-            selected_files = event.files or []
-            petition.attachments = [
-                getattr(file, "path", None) or getattr(file, "name", "")
-                for file in selected_files
-            ]
-            file_names = [getattr(file, "name", "attachment") for file in selected_files]
-            label.value = (
-                ", ".join(file_names) if file_names else "No attachments selected."
-            )
-            page.update()
-
-        file_picker = ft.FilePicker(on_result=handle_files_picked)
-        page.overlay.append(file_picker)
-
-        def open_template_editor(event: ft.ControlEvent) -> None:
-            template = getattr(event.control, "data", None)
-            if template is None:
-                show_snack("Template selection failed. Please try again.")
-                return
-            petition = template.clone()
-            petition.status = "draft"
-            if petition.petitioner == "[Student Name]":
-                petition.petitioner = ""
-            if petition.created_by == "system":
-                petition.created_by = ""
-
-            title_field = ft.TextField(label="Title", value=petition.title)
-            body_field = ft.TextField(
-                label="Body",
-                value=petition.body,
-                multiline=True,
-                min_lines=6,
-                max_lines=10,
-            )
-            petitioner_field = ft.TextField(
-                label="Petitioner Name",
-                value=petition.petitioner,
-            )
-            receiver_field = ft.TextField(
-                label="Receiver",
-                value=getattr(petition, "receiver", ""),
-            )
-            created_by_field = ft.TextField(
-                label="Created By / Username",
-                value=petition.created_by,
-            )
-            attachments_label = ft.Text(
-                ", ".join(petition.attachments) if petition.attachments else "No attachments selected."
+        def render_route(_: ft.RouteChangeEvent | None = None) -> None:
+            saved_count_text = ft.Text(
+                f"{len(registry.get_all_petitions())} saved petitions",
+                weight=ft.FontWeight.W_600,
             )
 
-            def sync_form_to_petition() -> None:
-                petition.title = title_field.value or ""
-                petition.body = body_field.value or ""
-                petition.petitioner = petitioner_field.value or ""
-                petition.receiver = receiver_field.value or ""
-                petition.created_by = created_by_field.value or ""
+            page.views.clear()
 
-            def save_petition(status: str) -> None:
-                sync_form_to_petition()
-                if not petition.petitioner.strip() or not petition.created_by.strip():
-                    show_snack("Petitioner name and username are required.")
-                    return
-                if not is_valid_petition(petition):
-                    show_snack("Petition body cannot be empty. Add attachments if required.")
-                    return
+            main_header = ft.Container(
+                padding=24,
+                content=ft.Column(
+                    spacing=8,
+                    controls=[
+                        ft.Text("Petition Producer", size=32, weight=ft.FontWeight.W_700),
+                        ft.Text(
+                            "Choose one of the built-in academic or administrative petition templates.",
+                            size=16,
+                            color=ft.Colors.ON_SURFACE_VARIANT,
+                        ),
+                        ft.Row(
+                            spacing=12,
+                            controls=[
+                                ft.Container(
+                                    bgcolor=ft.Colors.WHITE,
+                                    border_radius=16,
+                                    padding=ft.padding.symmetric(horizontal=14, vertical=10),
+                                    content=ft.Text(
+                                        f"{sum(len(items) for items in template_catalog.values())} templates",
+                                        weight=ft.FontWeight.W_600,
+                                    ),
+                                ),
+                                ft.Container(
+                                    bgcolor=ft.Colors.WHITE,
+                                    border_radius=16,
+                                    padding=ft.padding.symmetric(horizontal=14, vertical=10),
+                                    content=saved_count_text,
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            )
 
-                if status == "registered":
-                    registry.register_petition(petition)
-                    show_snack(f'"{petition.title}" was registered successfully.')
-                else:
-                    petition.status = "draft"
-                    registry.add_petition(petition)
-                    show_snack(f'"{petition.title}" was saved as draft.')
+            template_layout = ft.ResponsiveRow(
+                columns=12,
+                run_spacing=16,
+                controls=[
+                    ft.Column(
+                        col={"xs": 12, "md": 6},
+                        controls=[
+                            build_template_section(
+                                "Academic Templates",
+                                ft.Icons.SCHOOL_OUTLINED,
+                                template_catalog["academic"],
+                                start_template_edit,
+                            )
+                        ],
+                    ),
+                    ft.Column(
+                        col={"xs": 12, "md": 6},
+                        controls=[
+                            build_template_section(
+                                "Administrative Templates",
+                                ft.Icons.BUSINESS_CENTER_OUTLINED,
+                                template_catalog["administrative"],
+                                start_template_edit,
+                            )
+                        ],
+                    ),
+                ],
+            )
 
-                refresh_saved_count()
-                refresh_saved_petitions_list()
-                close_dialog(dialog)
+            saved_petitions_section = build_saved_petitions_section(
+                ft.Column(
+                    spacing=12,
+                    controls=[
+                        ft.Row(
+                            wrap=True,
+                            spacing=12,
+                            controls=[type_filter, status_filter],
+                        ),
+                        build_saved_petitions_content(),
+                    ],
+                )
+            )
 
-            def pick_attachments(_: ft.ControlEvent) -> None:
-                attachment_state["petition"] = petition
-                attachment_state["label"] = attachments_label
-                file_picker.pick_files(
-                    dialog_title="Select petition attachments",
-                    allow_multiple=True,
+            page.views.append(
+                ft.View(
+                    route="/",
+                    bgcolor=ft.Colors.BLUE_GREY_50,
+                    scroll=ft.ScrollMode.AUTO,
+                    controls=[
+                        main_header,
+                        ft.Container(
+                            padding=ft.padding.symmetric(horizontal=24),
+                            content=template_layout,
+                        ),
+                        ft.Container(
+                            padding=24,
+                            content=saved_petitions_section,
+                        ),
+                    ],
+                )
+            )
+
+            if page.route == "/edit":
+                page.views.append(
+                    ft.View(
+                        route="/edit",
+                        bgcolor=ft.Colors.BLUE_GREY_50,
+                        scroll=ft.ScrollMode.AUTO,
+                        appbar=ft.AppBar(
+                            leading=ft.IconButton(
+                                icon=ft.Icons.ARROW_BACK,
+                                on_click=lambda _: page.go("/"),
+                            ),
+                            title=ft.Text("Petition Editor"),
+                            bgcolor=ft.Colors.WHITE,
+                        ),
+                        controls=[
+                            ft.Container(
+                                padding=24,
+                                content=ft.Column(
+                                    spacing=16,
+                                    controls=[
+                                        ft.Text(
+                                            f"Editing Template: {current_template_title['value']}",
+                                            size=28,
+                                            weight=ft.FontWeight.W_700,
+                                        ),
+                                        ft.Text(
+                                            "Edit the cloned template and then save it as draft or register it.",
+                                            color=ft.Colors.ON_SURFACE_VARIANT,
+                                        ),
+                                        ft.Card(
+                                            elevation=1,
+                                            content=ft.Container(
+                                                padding=20,
+                                                content=ft.Column(
+                                                    spacing=12,
+                                                    controls=[
+                                                        title_field,
+                                                        body_field,
+                                                        petitioner_field,
+                                                        receiver_field,
+                                                        created_by_field,
+                                                        ft.Row(
+                                                            wrap=True,
+                                                            spacing=12,
+                                                            controls=[
+                                                                ft.ElevatedButton(
+                                                                    "Choose Files",
+                                                                    icon=ft.Icons.UPLOAD_FILE,
+                                                                    on_click=pick_attachments,
+                                                                ),
+                                                                ft.TextButton(
+                                                                    "Cancel",
+                                                                    on_click=lambda _: page.go("/"),
+                                                                ),
+                                                            ],
+                                                        ),
+                                                        attachments_label,
+                                                        ft.Row(
+                                                            wrap=True,
+                                                            spacing=12,
+                                                            controls=[
+                                                                ft.ElevatedButton(
+                                                                    "Save Draft",
+                                                                    on_click=lambda _: save_current_petition("draft"),
+                                                                ),
+                                                                ft.ElevatedButton(
+                                                                    "Register",
+                                                                    on_click=lambda _: save_current_petition("registered"),
+                                                                ),
+                                                            ],
+                                                        ),
+                                                    ],
+                                                ),
+                                            ),
+                                        ),
+                                    ],
+                                ),
+                            )
+                        ],
+                    )
                 )
 
-            dialog = ft.AlertDialog(
-                modal=True,
-                title=ft.Text(f"Edit Template: {template.title}"),
-                content=ft.Container(
-                    width=640,
-                    content=ft.Column(
-                        spacing=12,
-                        controls=[
-                            ft.Text(
-                                "The selected template was cloned. Edit the fields below before saving.",
-                                color=ft.Colors.ON_SURFACE_VARIANT,
-                            ),
-                            title_field,
-                            body_field,
-                            petitioner_field,
-                            receiver_field,
-                            created_by_field,
-                            ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                controls=[
-                                    ft.Text(
-                                        "Attachments are optional unless the petition requires them."
-                                    ),
-                                    ft.ElevatedButton(
-                                        "Choose Files",
-                                        icon=ft.Icons.UPLOAD_FILE,
-                                        on_click=pick_attachments,
-                                    ),
-                                ],
-                            ),
-                            attachments_label,
-                        ],
-                    ),
-                ),
-                actions=[
-                    ft.TextButton("Cancel", on_click=lambda _: close_dialog(dialog)),
-                    ft.ElevatedButton(
-                        "Save Draft",
-                        on_click=lambda _: save_petition("draft"),
-                    ),
-                    ft.ElevatedButton(
-                        "Register",
-                        on_click=lambda _: save_petition("registered"),
-                    ),
-                ],
-                actions_alignment=ft.MainAxisAlignment.END,
-            )
+            page.update()
 
-            page.open(dialog)
-
-        saved_count_text = ft.Text(
-            f"{len(registry.get_all_petitions())} saved petitions",
-            weight=ft.FontWeight.W_600,
-        )
-        type_filter.on_change = lambda _: refresh_saved_petitions_list()
-        status_filter.on_change = lambda _: refresh_saved_petitions_list()
-        refresh_saved_petitions_list()
-
-        header = ft.Container(
-            padding=ft.padding.only(bottom=16),
-            content=ft.Column(
-                spacing=8,
-                controls=[
-                    ft.Text("Petition Producer", size=32, weight=ft.FontWeight.W_700),
-                    ft.Text(
-                        "Choose one of the built-in academic or administrative petition templates.",
-                        size=16,
-                        color=ft.Colors.ON_SURFACE_VARIANT,
-                    ),
-                    ft.Row(
-                        spacing=12,
-                        controls=[
-                            ft.Container(
-                                bgcolor=ft.Colors.WHITE,
-                                border_radius=16,
-                                padding=ft.padding.symmetric(horizontal=14, vertical=10),
-                                content=ft.Text(
-                                    f"{sum(len(items) for items in template_catalog.values())} templates",
-                                    weight=ft.FontWeight.W_600,
-                                ),
-                            ),
-                            ft.Container(
-                                bgcolor=ft.Colors.WHITE,
-                                border_radius=16,
-                                padding=ft.padding.symmetric(horizontal=14, vertical=10),
-                                content=saved_count_text,
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        )
-
-        template_layout = ft.ResponsiveRow(
-            columns=12,
-            run_spacing=16,
-            controls=[
-                ft.Column(
-                    col={"xs": 12, "md": 6},
-                    controls=[
-                        build_template_section(
-                            "Academic Templates",
-                            ft.Icons.SCHOOL_OUTLINED,
-                            template_catalog["academic"],
-                            open_template_editor,
-                        )
-                    ],
-                ),
-                ft.Column(
-                    col={"xs": 12, "md": 6},
-                    controls=[
-                        build_template_section(
-                            "Administrative Templates",
-                            ft.Icons.BUSINESS_CENTER_OUTLINED,
-                            template_catalog["administrative"],
-                            open_template_editor,
-                        )
-                    ],
-                ),
-            ],
-        )
-
-        saved_petitions_section = build_saved_petitions_section(
-            ft.Column(
-                spacing=12,
-                controls=[
-                    ft.Row(
-                        wrap=True,
-                        spacing=12,
-                        controls=[type_filter, status_filter],
-                    ),
-                    saved_petitions_column,
-                ],
-            )
-        )
-
-        page.add(header, template_layout, saved_petitions_section)
+        type_filter.on_change = render_route
+        status_filter.on_change = render_route
+        page.on_route_change = render_route
+        page.go("/")
