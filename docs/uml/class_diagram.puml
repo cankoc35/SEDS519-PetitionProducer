@@ -1,0 +1,195 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+title Petition Producer - UML Class Diagram
+
+abstract class Petition {
+  +title: str
+  +body: str
+  +petitioner: str
+  +created_by: str
+  +status: str
+  +attachment_required: bool
+  +attachments: list[str]
+  +clone(): Petition
+  +to_dict(): dict[str, object]
+}
+
+class AcademicPetition {
+  +petition_type: str = "academic"
+  +receiver: str = "Dean"
+  +attachment_required: bool = false
+}
+
+class AdministrativePetition {
+  +petition_type: str = "administrative"
+  +receiver: str = "Administrative Office"
+  +attachment_required: bool = false
+}
+
+abstract class PetitionFactory {
+  +create_petition(
+    title: str,
+    body: str,
+    petitioner: str,
+    created_by: str,
+    status: str = "draft",
+    attachments: list[str] | None = None
+  ): Petition
+}
+
+class AcademicPetitionFactory {
+  +create_petition(...): AcademicPetition
+}
+
+class AdministrativePetitionFactory {
+  +create_petition(...): AdministrativePetition
+}
+
+class PetitionRegistry <<Singleton>> {
+  -_instance: PetitionRegistry | None
+  -_petitions: list[Petition]
+  -_storage_dir: Path
+  +add_petition(petition: Petition): None
+  +register_petition(petition: Petition): None
+  +get_all_petitions(): list[Petition]
+  +get_draft_petitions(): list[Petition]
+  +get_registered_petitions(): list[Petition]
+  +save_all_petitions(): None
+  +load_all_petitions(): None
+}
+
+class PetitionIterator <<Iterator>> {
+  -_petitions: list[Petition]
+  -_petition_type: str | None
+  -_status: str | None
+  -_index: int
+  +__iter__(): PetitionIterator
+  +__next__(): Petition
+}
+
+class PetitionApp {
+  +run(): None
+  +main(page: Page): None
+}
+
+class TemplateCatalog {
+  +get_academic_templates(): list[Petition]
+  +get_administrative_templates(): list[Petition]
+  +get_all_templates(): list[Petition]
+  +get_template_catalog(): dict[str, list[Petition]]
+}
+
+Petition <|-- AcademicPetition
+Petition <|-- AdministrativePetition
+
+PetitionFactory <|-- AcademicPetitionFactory
+PetitionFactory <|-- AdministrativePetitionFactory
+
+AcademicPetitionFactory ..> AcademicPetition : creates
+AdministrativePetitionFactory ..> AdministrativePetition : creates
+
+TemplateCatalog ..> AcademicPetitionFactory : uses
+TemplateCatalog ..> AdministrativePetitionFactory : uses
+
+PetitionRegistry "1" o-- "*" Petition : stores
+PetitionIterator ..> Petition : traverses
+PetitionIterator ..> PetitionRegistry : iterates over data from
+
+PetitionApp ..> PetitionRegistry : uses
+PetitionApp ..> PetitionIterator : uses
+PetitionApp ..> TemplateCatalog : uses
+PetitionApp ..> Petition : edits / clones
+
+note right of Petition
+This class is the main petition model.
+clone() is used to copy an existing petition
+and reuse it as a template for a new one.
+end note
+
+note right of PetitionFactory
+This is the base factory class.
+Different factory classes create
+different petition types.
+end note
+
+note right of PetitionRegistry
+This class is the shared petition registry.
+There is only one registry object
+in the whole application.
+end note
+
+note right of PetitionIterator
+This class is used to go through petitions.
+It can also filter them by type or status.
+end note
+
+note bottom of AcademicPetition
+This class represents academic petitions.
+It uses the common petition fields and
+adds academic default values.
+end note
+
+note bottom of AdministrativePetition
+This class represents administrative petitions.
+It uses the common petition fields and
+adds administrative default values.
+end note
+
+note bottom of TemplateCatalog
+This part stores the built-in templates.
+The user picks one template first,
+then edits a copied version of it.
+end note
+
+note left of PetitionApp
+The GUI coordinates the main flow:
+1. show built-in templates
+2. let the user select one
+3. open the editor
+4. save as draft or register
+5. display saved petitions
+end note
+
+note bottom of PetitionRegistry
+The registry keeps both draft petitions
+and registered petitions.
+It also saves them as JSON files.
+end note
+
+note bottom of PetitionIterator
+The iterator can traverse:
+- all petitions
+- academic only
+- administrative only
+- draft only
+- registered only
+or combinations of these filters.
+end note
+
+note on link
+TemplateCatalog ..> AcademicPetitionFactory
+Academic templates are created
+by the academic factory.
+end note
+
+note on link
+TemplateCatalog ..> AdministrativePetitionFactory
+Administrative templates are created
+by the administrative factory.
+end note
+
+note on link
+PetitionRegistry "1" o-- "*" Petition : stores
+One registry stores many petitions.
+end note
+
+note on link
+PetitionApp ..> Petition : edits / clones
+When the user selects a template,
+the app copies it and lets the user edit it.
+end note
+
+@enduml

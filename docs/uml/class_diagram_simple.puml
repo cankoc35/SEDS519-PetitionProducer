@@ -1,0 +1,92 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+title Petition Producer - Simplified UML
+
+abstract class Petition {
+  +title: str
+  +body: str
+  +petitioner: str
+  +created_by: str
+  +status: str
+  +attachments: list[str]
+  +clone(): Petition
+}
+
+class AcademicPetition {
+  +petition_type: str
+  +receiver: str
+}
+
+class AdministrativePetition {
+  +petition_type: str
+  +receiver: str
+}
+
+abstract class PetitionFactory {
+  +create_petition(...): Petition
+}
+
+class AcademicPetitionFactory {
+  +create_petition(...): AcademicPetition
+}
+
+class AdministrativePetitionFactory {
+  +create_petition(...): AdministrativePetition
+}
+
+class PetitionRegistry <<Singleton>> {
+  -_instance: PetitionRegistry
+  -_petitions: list[Petition]
+  +add_petition(petition: Petition): None
+  +register_petition(petition: Petition): None
+  +get_all_petitions(): list[Petition]
+}
+
+class PetitionIterator <<Iterator>> {
+  -_petitions: list[Petition]
+  -_petition_type: str | None
+  -_status: str | None
+  +__iter__(): PetitionIterator
+  +__next__(): Petition
+}
+
+Petition <|-- AcademicPetition
+Petition <|-- AdministrativePetition
+
+PetitionFactory <|-- AcademicPetitionFactory
+PetitionFactory <|-- AdministrativePetitionFactory
+
+AcademicPetitionFactory ..> AcademicPetition : creates
+AdministrativePetitionFactory ..> AdministrativePetition : creates
+
+PetitionRegistry "1" o-- "*" Petition : stores
+PetitionIterator ..> Petition : traverses
+
+note right of Petition
+Prototype pattern:
+existing petitions can be cloned
+and reused as templates.
+end note
+
+note right of PetitionRegistry
+Singleton pattern:
+one shared registry object
+for all petitions.
+end note
+
+note right of PetitionFactory
+Factory Method pattern:
+different factories create
+different petition types.
+end note
+
+note right of PetitionIterator
+Iterator pattern:
+supports normal and filtered
+petition traversal.
+end note
+
+@enduml
