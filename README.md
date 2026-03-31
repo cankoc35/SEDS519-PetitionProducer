@@ -1,59 +1,76 @@
-# SEDS519 Homework 1
+# SEDS519 Petition Producer
 
-Petition management system implemented in Python using design patterns.
+Petition management system for `SEDS519 HW1`, implemented in Python with the required design patterns.
 
-## Project Goal
+## Project Summary
 
-This project is a template-based petition builder for the SEDS519 homework.
+This project is a desktop petition application built with `Flet`.
 
-The app will provide `6` built-in petition templates:
+The system provides `6` built-in petition templates:
 
 - `3` academic templates
 - `3` administrative templates
 
-The user flow is planned as:
+The user can:
 
-1. choose one of the built-in templates
-2. optionally upload attachment files
-3. enter their own name
-4. edit fields such as `title`, `body`, `petitioner`, and `receiver`
-5. save the petition as draft or register it
-6. display previously saved petitions
+1. choose a built-in template
+2. edit petition fields such as `title`, `body`, `petitioner`, `receiver`, and `created_by`
+3. upload one or more attachments
+4. save the petition as `draft`
+5. register the petition
+6. view saved petitions and filter them by type or status
 
-The main focus of the homework is correct use of design patterns and the interaction between them, not advanced petition text generation.
+Saved petitions are persisted as JSON files in `data/petitions/`.
 
-## Current Status
+## Implemented Design Patterns
 
-The core backend logic is already implemented and working in console form:
+### Factory Method
 
-- petition models for academic and administrative petitions
-- factory layer for creating petition objects
-- singleton registry
-- iterator with type and status filtering
-- prototype cloning with `clone()`
-- basic validation
-- JSON persistence in `data/petitions/`
+Used to create different petition types through dedicated factories:
 
-Current limitation:
+- [petition_factory.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/factories/petition_factory.py)
+- [academic_factory.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/factories/academic_factory.py)
+- [administrative_factory.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/factories/administrative_factory.py)
 
-- the Flet GUI is still not implemented
-- the built-in 6-template catalog is not implemented yet
+### Singleton
 
-## Design Pattern Mapping
+Used for the shared petition registry:
 
-- `Factory Method`
-  Used to create different petition types such as academic and administrative petitions.
+- [petition_registry.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/registry/petition_registry.py)
 
-- `Singleton`
-  Used for `PetitionRegistry`, which acts as the single shared storage and management object.
+### Iterator
 
-- `Iterator`
-  Used to traverse petitions in a type-agnostic way and filter by petition type or status.
+Used to traverse petitions and apply type/status filtering:
 
-- `Prototype`
-  Used to clone an existing petition so it can be reused as a template.
+- [petition_iterator.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/iterators/petition_iterator.py)
 
-## Current Project Structure
+### Prototype
+
+Used to clone an existing petition/template before editing:
+
+- [petition.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/models/petition.py)
+
+## Current Features
+
+- built-in template catalog with `6` templates
+- academic and administrative petition subclasses
+- JSON-based petition persistence
+- draft and registered petition states
+- GUI for:
+  - selecting templates
+  - editing petitions
+  - uploading attachments
+  - saving/registering petitions
+  - viewing saved petitions
+  - filtering saved petitions by type and status
+- basic validation for:
+  - empty body
+  - missing attachments when `attachment_required=True`
+- UML sources for both:
+  - a detailed class diagram
+  - a simplified class diagram
+
+## Project Structure
 
 ```text
 SEDS519-PetitionProducer/
@@ -62,62 +79,85 @@ SEDS519-PetitionProducer/
 ├── docs/
 │   ├── SEDS519_HW1.pdf
 │   └── uml/
+│       ├── class_diagram.puml
+│       └── class_diagram_simple.puml
 ├── src/
 │   ├── main.py
 │   ├── models/
+│   │   ├── petition.py
+│   │   ├── academic_petition.py
+│   │   └── administrative_petition.py
 │   ├── factories/
+│   │   ├── petition_factory.py
+│   │   ├── academic_factory.py
+│   │   └── administrative_factory.py
 │   ├── registry/
+│   │   └── petition_registry.py
 │   ├── iterators/
+│   │   └── petition_iterator.py
+│   ├── templates/
+│   │   └── petition_templates.py
 │   ├── gui/
+│   │   ├── app.py
+│   │   └── forms.py
 │   └── utils/
-├── .gitignore
+│       └── validators.py
+├── requirements.txt
 ├── LICENSE
 └── README.md
 ```
 
 ## Important Files
 
-- `src/models/petition.py`
-  Base petition model, clone support, and JSON serialization.
+- [main.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/main.py)
+  Entry point that launches the GUI.
 
-- `src/models/academic_petition.py`
-  Academic petition subtype.
+- [petition.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/models/petition.py)
+  Base petition model, `clone()` support, and JSON serialization.
 
-- `src/models/administrative_petition.py`
-  Administrative petition subtype.
+- [petition_templates.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/templates/petition_templates.py)
+  Built-in academic and administrative petition templates.
 
-- `src/factories/petition_factory.py`
-  Abstract factory interface.
+- [app.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/gui/app.py)
+  Main Flet application and petition editor flow.
 
-- `src/factories/academic_factory.py`
-  Factory for academic petitions.
+- [forms.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/gui/forms.py)
+  Reusable GUI sections for template and petition display.
 
-- `src/factories/administrative_factory.py`
-  Factory for administrative petitions.
+- [validators.py](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/src/utils/validators.py)
+  Petition validation rules.
 
-- `src/registry/petition_registry.py`
-  Singleton registry plus JSON save/load behavior.
+- [class_diagram.puml](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/docs/uml/class_diagram.puml)
+  Detailed UML class diagram source.
 
-- `src/iterators/petition_iterator.py`
-  Iterator for all petitions or filtered petition traversal.
+- [class_diagram_simple.puml](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/docs/uml/class_diagram_simple.puml)
+  Simpler UML class diagram source.
 
-- `src/utils/validators.py`
-  Basic petition validation rules.
+## Built-in Templates
 
-- `src/main.py`
-  Current console demo for the implemented backend features.
+### Academic
+
+- Make-Up Exam Request
+- Course Exemption Request
+- Internship Approval Request
+
+### Administrative
+
+- Student ID Renewal Request
+- Official Document Request
+- Dormitory Issue Request
 
 ## Persistence
 
-Petitions are currently stored as JSON files in:
+Petitions are stored in:
 
 ```text
 data/petitions/
 ```
 
-This acts as a simple folder-based database, which matches the lecture guidance that a full database is not required.
+Each saved petition is written as a separate JSON file.
 
-## Run Locally
+## Local Setup
 
 Create a virtual environment:
 
@@ -137,68 +177,43 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Note:
-
-- `flet` is pinned to `0.28.2` because `0.28.3` has a macOS `FilePicker` issue that prevents the native file selection dialog from opening reliably in this project setup.
-
-Check that the virtual environment Python is active:
-
-```bash
-which python
-python --version
-```
-
-Run the current console demo:
+Run the app:
 
 ```bash
 python src/main.py
 ```
 
-Leave the virtual environment when you are done:
+Leave the virtual environment:
 
 ```bash
 deactivate
 ```
 
-## Roadmap
+## Dependency Note
 
-### 1. Build the Template Catalog
+`flet` is pinned to `0.28.2` in [requirements.txt](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/requirements.txt).
 
-- define `3` academic templates
-- define `3` administrative templates
-- make user-created petitions start from these built-in templates
+Reason:
 
-### 2. Strengthen Prototype Usage
+- `0.28.3` had a macOS `FilePicker` issue during this project
+- the attachment upload flow worked correctly with `0.28.2` in the current setup
 
-- clone a selected built-in template
-- let the user edit the cloned petition instead of editing the original template
+## UML
 
-### 3. Build the Flet GUI
+UML sources are in:
 
-- show the available templates
-- let the user choose one
-- let the user edit petition fields
-- let the user upload attachments
-- let the user save draft or register
+- [class_diagram.puml](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/docs/uml/class_diagram.puml)
+- [class_diagram_simple.puml](/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/SEDS519-PetitionProducer/docs/uml/class_diagram_simple.puml)
 
-### 4. Connect GUI to Persistence
+If `plantuml` is installed on your machine, render them with:
 
-- load saved petitions into the interface
-- display saved petitions from JSON storage
-- allow filtering by type and status
+```bash
+plantuml docs/uml/class_diagram.puml
+plantuml docs/uml/class_diagram_simple.puml
+```
 
-### 5. Prepare UML
+## Remaining Work
 
-- draw the UML class diagram
-- clearly show interactions between the patterns
-
-## TODO
-
-- [ ] Add the built-in `6` petition templates.
-- [ ] Decide the exact titles and default bodies of those templates.
-- [ ] Build the Flet GUI.
-- [ ] Add file upload support for attachments in the GUI.
-- [ ] Connect template selection to Prototype cloning.
-- [ ] Display saved petitions in the GUI.
-- [ ] Add filtering controls in the GUI.
-- [ ] Prepare UML diagrams for submission.
+- strengthen the validation story by marking some templates as attachment-required
+- decide whether to support user-created templates from scratch explicitly
+- optionally store copied attachment files in a dedicated app folder instead of only storing selected paths
