@@ -1,11 +1,13 @@
 {
-  "title": "Internship Approval Request",
-  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.\n\nThis is a TEST petition.",
-  "petitioner": "Mustafacan Koc TEST",
-  "created_by": "Mustafacan Koc TEST",
-  "status": "registered",
+  "title": "Course Exemption Request",
+  "body": "I request exemption from the introductory programming course.",
+  "petitioner": "Ayse Yilmaz",
+  "created_by": "ayse",
+  "status": "draft",
   "attachment_required": false,
-  "attachments": [],
+  "attachments": [
+    "medical_report.pdf"
+  ],
   "petition_type": "academic",
   "receiver": "Dean"
 }

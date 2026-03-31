@@ -1,13 +1,11 @@
 {
-  "title": "Course Exemption Request",
-  "body": "I request exemption from the introductory programming course.",
-  "petitioner": "Ayse Yilmaz",
-  "created_by": "ayse",
-  "status": "draft",
+  "title": "Student ID Renewal Request",
+  "body": "I request the renewal of my student ID card.",
+  "petitioner": "Mehmet Demir",
+  "created_by": "mehmet",
+  "status": "registered",
   "attachment_required": false,
-  "attachments": [
-    "medical_report.pdf"
-  ],
-  "petition_type": "academic",
-  "receiver": "Dean"
+  "attachments": [],
+  "petition_type": "administrative",
+  "receiver": "Administrative Office"
 }
