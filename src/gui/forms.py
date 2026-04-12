@@ -12,6 +12,8 @@ def build_template_section(
     icon: str,
     templates: list[Petition],
     on_select: ft.ControlEventHandler[ft.ListTile],
+    description: str = "Choose a built-in template to start editing a petition.",
+    empty_message: str = "No templates available yet.",
 ) -> ft.Card:
     """Build a card that displays petition templates for one category."""
     return ft.Card(
@@ -29,27 +31,38 @@ def build_template_section(
                         ],
                     ),
                     ft.Text(
-                        "Choose a built-in template to start editing a petition.",
+                        description,
                         color=ft.Colors.ON_SURFACE_VARIANT,
                     ),
                     ft.Column(
                         spacing=8,
-                        controls=[
-                            ft.ListTile(
-                                adaptive=True,
-                                leading=ft.Icon(ft.Icons.DESCRIPTION_OUTLINED),
-                                title=ft.Text(template.title),
-                                subtitle=ft.Text(
-                                    f"Receiver: {getattr(template, 'receiver', '-')}"
-                                ),
-                                trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT),
-                                data=template,
-                                on_click=on_select,
-                                bgcolor=ft.Colors.WHITE,
-                                shape=ft.RoundedRectangleBorder(radius=12),
-                            )
-                            for template in templates
-                        ],
+                        controls=(
+                            [
+                                ft.ListTile(
+                                    adaptive=True,
+                                    leading=ft.Icon(ft.Icons.DESCRIPTION_OUTLINED),
+                                    title=ft.Text(template.title),
+                                    subtitle=ft.Text(
+                                        f"Receiver: {getattr(template, 'receiver', '-')}"
+                                    ),
+                                    trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT),
+                                    data=template,
+                                    on_click=on_select,
+                                    bgcolor=ft.Colors.WHITE,
+                                    shape=ft.RoundedRectangleBorder(radius=12),
+                                )
+                                for template in templates
+                            ]
+                            if templates
+                            else [
+                                ft.Container(
+                                    bgcolor=ft.Colors.WHITE,
+                                    border_radius=12,
+                                    padding=16,
+                                    content=ft.Text(empty_message),
+                                )
+                            ]
+                        ),
                     ),
                 ],
             ),

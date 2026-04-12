@@ -14,13 +14,16 @@ The system provides `6` built-in petition templates:
 The user can:
 
 1. choose a built-in template
-2. edit petition fields such as `title`, `body`, `petitioner`, `receiver`, and `created_by`
-3. upload one or more attachments
-4. save the petition as `draft`
-5. register the petition
-6. view saved petitions and filter them by type or status
+2. create a blank academic or administrative petition from scratch
+3. edit petition fields such as `title`, `body`, `petitioner`, `receiver`, and `created_by`
+4. save the current editor state as a reusable custom template
+5. upload one or more attachments
+6. save the petition as `draft`
+7. register the petition
+8. view saved petitions and filter them by type or status
 
 Saved petitions are persisted as JSON files in `data/petitions/`.
+User-defined templates are persisted separately in `data/templates/`.
 
 ## Implemented Design Patterns
 
@@ -53,12 +56,16 @@ Used to clone an existing petition/template before editing:
 ## Current Features
 
 - built-in template catalog with `6` templates
+- user-defined template creation from scratch
+- reusable custom templates saved separately from petitions
 - academic and administrative petition subclasses
 - JSON-based petition persistence
 - draft and registered petition states
 - GUI for:
   - selecting templates
+  - creating petitions from scratch
   - editing petitions
+  - saving custom templates
   - uploading attachments
   - saving/registering petitions
   - viewing saved petitions
@@ -75,7 +82,8 @@ Used to clone an existing petition/template before editing:
 ```text
 SEDS519-PetitionProducer/
 ├── data/
-│   └── petitions/
+│   ├── petitions/
+│   └── templates/
 ├── docs/
 │   ├── SEDS519_HW1.pdf
 │   └── uml/
@@ -157,6 +165,12 @@ data/petitions/
 
 Each saved petition is written as a separate JSON file.
 
+User-defined templates are stored in:
+
+```text
+data/templates/
+```
+
 ## Local Setup
 
 Create a virtual environment:
@@ -215,5 +229,4 @@ plantuml docs/uml/class_diagram_simple.puml
 ## Remaining Work
 
 - strengthen the validation story by marking some templates as attachment-required
-- decide whether to support user-created templates from scratch explicitly
 - optionally store copied attachment files in a dedicated app folder instead of only storing selected paths
