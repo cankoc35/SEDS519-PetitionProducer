@@ -18,6 +18,7 @@ class PetitionFactory(ABC):
         petitioner: str,
         created_by: str,
         status: str = "draft",
+        attachment_required: bool = False,
         attachments: list[str] | None = None,
     ) -> Petition:
         """Create and return a petition object."""

@@ -1,13 +1,11 @@
 {
-  "title": "Official Document Request TEST ",
-  "body": "I respectfully request the preparation and delivery of the official document stated in this petition.",
-  "petitioner": "TEST JPEG",
+  "title": "Dormitory Issue Request TEST",
+  "body": "TEST TEST TEST ",
+  "petitioner": "TEST ",
   "created_by": "TEST ",
-  "status": "registered",
+  "status": "draft",
   "attachment_required": false,
-  "attachments": [
-    "/Users/cankoc/Desktop/IMG_2422.JPG"
-  ],
+  "attachments": [],
   "petition_type": "administrative",
   "receiver": "Administrative Office"
 }

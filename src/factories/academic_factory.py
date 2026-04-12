@@ -17,6 +17,7 @@ class AcademicPetitionFactory(PetitionFactory):
         petitioner: str,
         created_by: str,
         status: str = "draft",
+        attachment_required: bool = False,
         attachments: list[str] | None = None,
     ) -> AcademicPetition:
         return AcademicPetition(
@@ -25,5 +26,6 @@ class AcademicPetitionFactory(PetitionFactory):
             petitioner=petitioner,
             created_by=created_by,
             status=status,
+            attachment_required=attachment_required,
             attachments=attachments or [],
         )

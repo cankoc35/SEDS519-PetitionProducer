@@ -3,11 +3,9 @@
   "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
   "petitioner": "Can Koc",
   "created_by": "Can Koc",
-  "status": "registered",
+  "status": "draft",
   "attachment_required": true,
-  "attachments": [
-    "/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/week1/CENG211_20_Object Oriented Design To Present.pdf"
-  ],
+  "attachments": [],
   "petition_type": "academic",
   "receiver": "Dean"
 }

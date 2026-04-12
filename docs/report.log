@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.28)  12 APR 2026 22:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.28)  12 APR 2026 23:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -463,13 +463,13 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <6> on input line 42.
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 5
-2.
+4.
 
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 6
-6.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 7
+0.
 
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
@@ -484,7 +484,7 @@ exlive/2025basic/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 93.
+nput line 98.
 
 
 [2]
@@ -494,47 +494,56 @@ nput line 93.
 [4]
 
 [5]
-Overfull \hbox (54.91393pt too wide) in paragraph at lines 333--338
+Overfull \hbox (54.91393pt too wide) in paragraph at lines 352--357
 \T1/lmr/m/n/10.95 aca-demic, it re-builds an \T1/lmtt/m/n/10.95 AcademicPetitio
 n\T1/lmr/m/n/10.95 ; if it is ad-min-is-tra-tive, it re-builds an \T1/lmtt/m/n/
 10.95 AdministrativePetition\T1/lmr/m/n/10.95 .
  []
 
-<uml/class_diagram.png, id=201, 1591.9475pt x 806.01125pt>
+<uml/class_diagram.png, id=202, 2119.92pt x 1127.21124pt>
 File: uml/class_diagram.png Graphic file (type png)
 <use uml/class_diagram.png>
-Package pdftex.def Info: uml/class_diagram.png  used on input line 347.
-(pdftex.def)             Requested size: 452.9679pt x 229.33432pt.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 356.
+Package pdftex.def Info: uml/class_diagram.png  used on input line 380.
+(pdftex.def)             Requested size: 452.9679pt x 240.8493pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--363
+
+[6]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10.95> on input line 389.
+
+Underfull \hbox (badness 10000) in paragraph at lines 393--397
 []\T1/lmr/m/n/10.95 Implemented via \T1/lmtt/m/n/10.95 PetitionFactory\T1/lmr/m
 /n/10.95 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--363
+Underfull \hbox (badness 10000) in paragraph at lines 393--397
 \T1/lmtt/m/n/10.95 AcademicPetitionFactory\T1/lmr/m/n/10.95 , and
  []
 
 
+Underfull \hbox (badness 3547) in paragraph at lines 393--397
+\T1/lmtt/m/n/10.95 AdministrativePetitionFactory\T1/lmr/m/n/10.95 ; also used t
+o con-
+ []
 
-[6
+
+
+[7
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.377 
-       <./uml/class_diagram.png>]
-
-[7
+l.423 
+      
 pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.391 \end{document}
-                    ] (./report.aux)
+l.423 
+       <./uml/class_diagram.png>]
+
+[8] (./report.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -543,8 +552,8 @@ Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: F488055B03788AC533C3CF98645A5092;3705.
  ) 
 Here is how much of TeX's memory you used:
- 12268 strings out of 474662
- 187829 string characters out of 5751108
+ 12270 strings out of 474662
+ 187849 string characters out of 5751108
  861632 words of memory out of 5000000
  35064 multiletter control sequences out of 15000+600000
  593538 words of font info for 60 fonts, out of 8000000 for 9000
@@ -555,10 +564,10 @@ sr/local/texlive/2025basic/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/loc
 al/texlive/2025basic/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/tex
 live/2025basic/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2
 025basic/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on report.pdf (7 pages, 487777 bytes).
+Output written on report.pdf (8 pages, 410049 bytes).
 PDF statistics:
- 265 PDF objects out of 1000 (max. 8388607)
- 240 compressed objects within 3 object streams
- 94 named destinations out of 1000 (max. 500000)
+ 270 PDF objects out of 1000 (max. 8388607)
+ 244 compressed objects within 3 object streams
+ 96 named destinations out of 1000 (max. 500000)
  230 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -8,7 +8,7 @@ from models.petition import Petition
 def get_academic_templates() -> list[Petition]:
     """Return the built-in academic petition templates."""
     factory = AcademicPetitionFactory()
-    return [
+    templates = [
         factory.create_petition(
             title="Make-Up Exam Request",
             body=(
@@ -35,8 +35,10 @@ def get_academic_templates() -> list[Petition]:
             ),
             petitioner="[Student Name]",
             created_by="system",
+            attachment_required=True,
         ),
     ]
+    return templates
 
 
 def get_administrative_templates() -> list[Petition]:

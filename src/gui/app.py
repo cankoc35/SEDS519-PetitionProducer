@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import flet as ft
 
 from factories.academic_factory import AcademicPetitionFactory
@@ -53,6 +55,11 @@ class PetitionApp:
         receiver_field = ft.TextField(label="Receiver")
         created_by_field = ft.TextField(label="Created By / Username")
         attachments_label = ft.Text("No attachments selected.")
+        attachment_requirement_text = ft.Text(
+            "",
+            color=ft.Colors.RED_700,
+            weight=ft.FontWeight.W_600,
+        )
 
         def sync_form_to_petition() -> object | None:
             petition = current_petition["value"]
@@ -74,6 +81,7 @@ class PetitionApp:
             receiver_field.value = ""
             created_by_field.value = ""
             attachments_label.value = "No attachments selected."
+            attachment_requirement_text.value = ""
 
         def handle_files_picked(event: ft.FilePickerResultEvent) -> None:
             petition = current_petition["value"]
@@ -155,6 +163,11 @@ class PetitionApp:
                 if petition.attachments
                 else "No attachments selected."
             )
+            attachment_requirement_text.value = (
+                "Attachments are required for this petition."
+                if getattr(petition, "attachment_required", False)
+                else ""
+            )
             page.go("/edit")
 
         def start_template_edit(event: ft.ControlEvent) -> None:
@@ -196,9 +209,19 @@ class PetitionApp:
         def build_saved_petition_tile(petition: object) -> ft.ListTile:
             petition_type = getattr(petition, "petition_type", "petition").title()
             receiver = getattr(petition, "receiver", "-")
+            attachment_names = [
+                Path(str(attachment)).name for attachment in getattr(petition, "attachments", [])
+            ]
+            attachment_summary = (
+                ", ".join(attachment_names[:2])
+                + (" ..." if len(attachment_names) > 2 else "")
+                if attachment_names
+                else "No attachments"
+            )
             subtitle = (
                 f"Type: {petition_type} | Status: {petition.status} | "
-                f"Petitioner: {petition.petitioner or '-'} | Receiver: {receiver}"
+                f"Petitioner: {petition.petitioner or '-'} | Receiver: {receiver} | "
+                f"Attachments: {attachment_summary}"
             )
             return ft.ListTile(
                 adaptive=True,
@@ -492,6 +515,7 @@ class PetitionApp:
                                                             ],
                                                         ),
                                                         attachments_label,
+                                                        attachment_requirement_text,
                                                         ft.Row(
                                                             wrap=True,
                                                             spacing=12,
