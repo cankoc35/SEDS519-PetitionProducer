@@ -1,0 +1,13 @@
+{
+  "title": "test",
+  "body": "test",
+  "petitioner": "test",
+  "created_by": "test",
+  "status": "registered",
+  "attachment_required": false,
+  "attachments": [
+    "/Users/cankoc/Desktop/Screenshot 2026-04-12 at 23.23.21.png"
+  ],
+  "petition_type": "academic",
+  "receiver": "Dean"
+}
