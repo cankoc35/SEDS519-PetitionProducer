@@ -1,12 +1,12 @@
 {
-  "title": "Course Exemption Request",
-  "body": "I request exemption from the introductory programming course.",
-  "petitioner": "Ayse Yilmaz",
-  "created_by": "ayse",
-  "status": "draft",
-  "attachment_required": false,
+  "title": "Internship Approval Request",
+  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
+  "petitioner": "Can Koc",
+  "created_by": "Can Koc",
+  "status": "registered",
+  "attachment_required": true,
   "attachments": [
-    "medical_report.pdf"
+    "/Users/cankoc/Desktop/Screenshot 2026-04-12 at 23.23.21.png"
   ],
   "petition_type": "academic",
   "receiver": "Dean"

@@ -1,11 +1,13 @@
 {
-  "title": "Dormitory Issue Request TEST",
-  "body": "TEST TEST TEST ",
-  "petitioner": "TEST ",
-  "created_by": "TEST ",
+  "title": "Course Exemption Request",
+  "body": "I request exemption from the introductory programming course.",
+  "petitioner": "Ayse Yilmaz",
+  "created_by": "ayse",
   "status": "draft",
   "attachment_required": false,
-  "attachments": [],
-  "petition_type": "administrative",
-  "receiver": "Administrative Office"
+  "attachments": [
+    "medical_report.pdf"
+  ],
+  "petition_type": "academic",
+  "receiver": "Dean"
 }

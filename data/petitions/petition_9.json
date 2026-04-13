@@ -1,11 +1,13 @@
 {
-  "title": "Student ID Renewal Request",
-  "body": "I request the renewal of my student ID card.",
-  "petitioner": "Mehmet Demir",
-  "created_by": "mehmet",
+  "title": "Internship Approval Request",
+  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
+  "petitioner": "Can Koc",
+  "created_by": "Can Koc",
   "status": "registered",
-  "attachment_required": false,
-  "attachments": [],
-  "petition_type": "administrative",
-  "receiver": "Administrative Office"
+  "attachment_required": true,
+  "attachments": [
+    "/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/week1/CENG211_20_Object Oriented Design To Present.pdf"
+  ],
+  "petition_type": "academic",
+  "receiver": "Dean"
 }

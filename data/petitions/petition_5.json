@@ -1,13 +1,11 @@
 {
-  "title": "Internship Approval Request",
-  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
-  "petitioner": "Can Koc",
-  "created_by": "Can Koc",
+  "title": "Course Exemption Request TEST ",
+  "body": "I respectfully request exemption from the specified course based on my previous academic background.\n\nTEST course request ",
+  "petitioner": "Mustafacan",
+  "created_by": "Mustafacan",
   "status": "registered",
-  "attachment_required": true,
-  "attachments": [
-    "/Users/cankoc/Desktop/Screenshot 2026-04-12 at 23.23.21.png"
-  ],
+  "attachment_required": false,
+  "attachments": [],
   "petition_type": "academic",
   "receiver": "Dean"
 }

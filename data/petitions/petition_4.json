@@ -1,13 +1,11 @@
 {
-  "title": "Internship Approval Request",
-  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
-  "petitioner": "Can Koc",
-  "created_by": "Can Koc",
+  "title": "Dormitory Issue Request",
+  "body": "I respectfully submit my request regarding the dormitory-related issue explained below.\n\nThis is a TEST petition. ",
+  "petitioner": "Mustafacan koc TEST",
+  "created_by": "Mustafacan koc TEST",
   "status": "registered",
-  "attachment_required": true,
-  "attachments": [
-    "/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/week1/CENG211_20_Object Oriented Design To Present.pdf"
-  ],
-  "petition_type": "academic",
-  "receiver": "Dean"
+  "attachment_required": false,
+  "attachments": [],
+  "petition_type": "administrative",
+  "receiver": "Administrative Office"
 }
