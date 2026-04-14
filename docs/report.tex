@@ -33,7 +33,7 @@
 }
 
 \title{SEDS519 HW1 Report\\Petition Management System}
-\author{Student Name \\ Student ID}
+\author{Student Name \\ 323011014}
 \date{\today}
 
 \begin{document}
@@ -381,35 +381,6 @@ structure and interactions.
     \caption{UML class diagram of the Petition Management System}
     \label{fig:uml}
 \end{figure}
-
-\section{Requirement Coverage}
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{p{0.28\textwidth} p{0.62\textwidth}}
-        \toprule
-        Requirement & Implementation Summary \\
-        \midrule
-        Factory Method & Implemented via \texttt{PetitionFactory},
-        \texttt{AcademicPetitionFactory}, and
-        \texttt{AdministrativePetitionFactory}; also used to configure
-        attachment requirements during petition creation. \\
-        Singleton & Implemented via \texttt{PetitionRegistry} and its
-        class-level \texttt{\_instance}. \\
-        Iterator & Implemented via \texttt{PetitionIterator} with optional
-        type and status filtering. \\
-        Prototype & Implemented via \texttt{Petition.clone()} using
-        deep copy. \\
-        Validation & Implemented in
-        \texttt{utils/validators.py}, including the internship template's
-        attachment requirement. \\
-        GUI & Implemented with Flet in the \texttt{gui} package, including
-        built-in templates, custom templates, and blank petition creation. \\
-        UML & Included in \texttt{docs/uml}. \\
-        \bottomrule
-    \end{tabular}
-    \caption{Homework requirement coverage}
-\end{table}
 
 \section{Conclusion}
 

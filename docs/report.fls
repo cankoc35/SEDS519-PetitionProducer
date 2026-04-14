@@ -191,9 +191,6 @@ INPUT ./uml/class_diagram.png
 INPUT ./uml/class_diagram.png
 INPUT ./uml/class_diagram.png
 INPUT ./uml/class_diagram.png
-INPUT /usr/local/texlive/2025basic/texmf-dist/fonts/tfm/public/lm/rm-lmr10.tfm
-INPUT /usr/local/texlive/2025basic/texmf-dist/fonts/tfm/public/lm/lmmi10.tfm
-INPUT /usr/local/texlive/2025basic/texmf-dist/fonts/tfm/public/lm/lmsy10.tfm
 INPUT report.aux
 INPUT ./report.out
 INPUT ./report.out
