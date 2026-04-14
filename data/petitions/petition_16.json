@@ -1,0 +1,11 @@
+{
+  "title": "Test title",
+  "body": "Test body",
+  "petitioner": "Can Koc",
+  "created_by": "Can Koc",
+  "status": "registered",
+  "attachment_required": false,
+  "attachments": [],
+  "petition_type": "academic",
+  "receiver": "Dean"
+}

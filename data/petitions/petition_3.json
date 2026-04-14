@@ -1,11 +1,11 @@
 {
-  "title": "Dormitory Issue Request TEST",
-  "body": "TEST TEST TEST ",
-  "petitioner": "TEST ",
-  "created_by": "TEST ",
-  "status": "draft",
+  "title": "Internship Approval Request",
+  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.\n\nThis is a TEST petition.",
+  "petitioner": "Mustafacan Koc TEST",
+  "created_by": "Mustafacan Koc TEST",
+  "status": "registered",
   "attachment_required": false,
   "attachments": [],
-  "petition_type": "administrative",
-  "receiver": "Administrative Office"
+  "petition_type": "academic",
+  "receiver": "Dean"
 }

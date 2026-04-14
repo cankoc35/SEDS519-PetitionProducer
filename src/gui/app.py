@@ -698,13 +698,13 @@ class PetitionApp:
                                                         vertical=10,
                                                     ),
                                                     content=ft.Text(
-                                                        "Registered petition shown in A4-style layout",
+                                                        "Registered petition",
                                                         weight=ft.FontWeight.W_600,
                                                         color=ft.Colors.WHITE,
                                                     ),
                                                 ),
                                                 ft.ElevatedButton(
-                                                    "Download A4 PDF",
+                                                    "Download PDF",
                                                     icon=ft.Icons.DOWNLOAD_OUTLINED,
                                                     on_click=export_registered_petition,
                                                 ),

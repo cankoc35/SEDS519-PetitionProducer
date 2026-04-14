@@ -1,11 +1,13 @@
 {
-  "title": "Dormitory Issue Request",
-  "body": "I respectfully submit my request regarding the dormitory-related issue explained below.\n\nThis is a TEST petition. ",
-  "petitioner": "Mustafacan koc TEST",
-  "created_by": "Mustafacan koc TEST",
+  "title": "Internship Approval Request",
+  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
+  "petitioner": "TEST",
+  "created_by": "TEST",
   "status": "registered",
-  "attachment_required": false,
-  "attachments": [],
-  "petition_type": "administrative",
-  "receiver": "Administrative Office"
+  "attachment_required": true,
+  "attachments": [
+    "/Users/cankoc/Desktop/Screenshot 2026-04-12 at 23.23.21.png"
+  ],
+  "petition_type": "academic",
+  "receiver": "Dean"
 }
