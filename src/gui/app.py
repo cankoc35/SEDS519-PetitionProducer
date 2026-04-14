@@ -245,6 +245,9 @@ class PetitionApp:
             if petition is None:
                 show_snack("Saved petition could not be opened.")
                 return
+            if petition.status == "draft":
+                open_editor_for_petition(petition, f"Draft: {petition.title}")
+                return
             current_saved_petition["value"] = petition
             page.go("/saved")
 

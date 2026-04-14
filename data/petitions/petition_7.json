@@ -1,13 +1,11 @@
 {
-  "title": "Internship Approval Request",
-  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
-  "petitioner": "Can Koc ",
-  "created_by": "Can Koc",
-  "status": "registered",
-  "attachment_required": true,
-  "attachments": [
-    "/Users/cankoc/Desktop/Screenshot 2026-04-12 at 23.23.21.png"
-  ],
+  "title": "TEST TEST petititon TESTE",
+  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information. TEST ",
+  "petitioner": "TEST ",
+  "created_by": "TEST ",
+  "status": "draft",
+  "attachment_required": false,
+  "attachments": [],
   "petition_type": "academic",
   "receiver": "Dean"
 }
