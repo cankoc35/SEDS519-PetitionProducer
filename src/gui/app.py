@@ -12,6 +12,7 @@ from iterators.petition_iterator import PetitionIterator
 from registry.petition_registry import PetitionRegistry
 from registry.template_registry import TemplateRegistry
 from templates.petition_templates import get_template_catalog
+from utils.pdf_export import export_petition_pdf
 from utils.validators import is_valid_petition
 
 from .forms import build_saved_petitions_section, build_template_section
@@ -32,6 +33,7 @@ class PetitionApp:
         current_petition: dict[str, object | None] = {"value": None}
         current_template_title: dict[str, str] = {"value": "No template selected."}
         current_saved_petition: dict[str, object | None] = {"value": None}
+        pending_export_petition: dict[str, object | None] = {"value": None}
 
         page.title = "Petition Producer"
         page.theme_mode = ft.ThemeMode.LIGHT
@@ -103,6 +105,24 @@ class PetitionApp:
         file_picker = ft.FilePicker(on_result=handle_files_picked)
         page.overlay.append(file_picker)
 
+        def handle_export_path_selected(event: ft.FilePickerResultEvent) -> None:
+            petition = pending_export_petition["value"]
+            if petition is None or not event.path:
+                return
+
+            target_path = Path(event.path)
+            try:
+                target_path = export_petition_pdf(petition, target_path)
+            except Exception as exc:
+                show_snack(f"PDF export failed: {exc}")
+                pending_export_petition["value"] = None
+                return
+            pending_export_petition["value"] = None
+            show_snack(f'A4 petition was exported to "{target_path.name}".')
+
+        export_picker = ft.FilePicker(on_result=handle_export_path_selected)
+        page.overlay.append(export_picker)
+
         def pick_attachments(_: ft.ControlEvent) -> None:
             if current_petition["value"] is None:
                 show_snack("Please start a petition first.")
@@ -150,6 +170,22 @@ class PetitionApp:
 
             clear_editor()
             page.go("/")
+
+        def export_registered_petition(_: ft.ControlEvent | None = None) -> None:
+            petition = current_saved_petition["value"]
+            if petition is None or petition.status != "registered":
+                show_snack("Only registered petitions can be exported in A4 format.")
+                return
+
+            pending_export_petition["value"] = petition
+            safe_name = "".join(
+                char.lower() if char.isalnum() else "_"
+                for char in petition.title.strip()
+            ).strip("_") or "petition"
+            export_picker.save_file(
+                dialog_title="Export registered petition as A4 PDF",
+                file_name=f"{safe_name}.pdf",
+            )
 
         def open_editor_for_petition(petition: object, source_title: str) -> None:
             current_petition["value"] = petition
@@ -571,29 +607,70 @@ class PetitionApp:
                 attachments = getattr(petition, "attachments", [])
                 attachment_controls = (
                     [
-                        ft.Container(
-                            bgcolor=ft.Colors.WHITE,
-                            border_radius=12,
-                            padding=12,
-                            content=ft.Text(Path(str(attachment)).name),
+                        ft.Text(
+                            f"- {Path(str(attachment)).name}",
+                            color=ft.Colors.BLACK,
+                            font_family="Times New Roman",
+                            size=16,
                         )
                         for attachment in attachments
                     ]
                     if attachments
-                    else [
-                        ft.Container(
-                            bgcolor=ft.Colors.WHITE,
-                            border_radius=12,
-                            padding=12,
-                            content=ft.Text("No attachments uploaded."),
-                        )
-                    ]
+                    else []
+                )
+                a4_paper = ft.Container(
+                    width=820,
+                    bgcolor=ft.Colors.WHITE,
+                    border_radius=0,
+                    padding=ft.padding.symmetric(horizontal=70, vertical=80),
+                    content=ft.Column(
+                        spacing=18,
+                        controls=[
+                            ft.Text(
+                                petition.title,
+                                size=16,
+                                weight=ft.FontWeight.W_700,
+                                color=ft.Colors.BLACK,
+                                font_family="Times New Roman",
+                            ),
+                            ft.Text(
+                                f"Receiver: {receiver}",
+                                color=ft.Colors.BLACK,
+                                font_family="Times New Roman",
+                                size=16,
+                            ),
+                            ft.Text(
+                                f"Petitioner: {petition.petitioner or '-'}",
+                                color=ft.Colors.BLACK,
+                                font_family="Times New Roman",
+                                size=16,
+                            ),
+                            ft.Text(
+                                petition.body,
+                                selectable=True,
+                                size=16,
+                                color=ft.Colors.BLACK,
+                                font_family="Times New Roman",
+                            ),
+                            ft.Text(
+                                "Attachments",
+                                size=16,
+                                weight=ft.FontWeight.W_600,
+                                color=ft.Colors.BLACK,
+                                font_family="Times New Roman",
+                            ),
+                            ft.Column(
+                                spacing=8,
+                                controls=attachment_controls,
+                            ),
+                        ],
+                    ),
                 )
 
                 page.views.append(
                     ft.View(
                         route="/saved",
-                        bgcolor=ft.Colors.BLUE_GREY_50,
+                        bgcolor=ft.Colors.WHITE,
                         scroll=ft.ScrollMode.AUTO,
                         appbar=ft.AppBar(
                             leading=ft.IconButton(
@@ -609,50 +686,33 @@ class PetitionApp:
                                 content=ft.Column(
                                     spacing=16,
                                     controls=[
-                                        ft.Text(
-                                            petition.title,
-                                            size=28,
-                                            weight=ft.FontWeight.W_700,
-                                        ),
-                                        ft.Card(
-                                            elevation=1,
-                                            content=ft.Container(
-                                                padding=20,
-                                                content=ft.Column(
-                                                    spacing=14,
-                                                    controls=[
-                                                        ft.Text(f"Type: {petition_type}"),
-                                                        ft.Text(f"Status: {petition.status.title()}"),
-                                                        ft.Text(
-                                                            f"Petitioner: {petition.petitioner or '-'}"
-                                                        ),
-                                                        ft.Text(f"Receiver: {receiver}"),
-                                                        ft.Text(
-                                                            f"Created By: {petition.created_by or '-'}"
-                                                        ),
-                                                        ft.Text(
-                                                            "Body",
-                                                            size=18,
-                                                            weight=ft.FontWeight.W_600,
-                                                        ),
-                                                        ft.Container(
-                                                            bgcolor=ft.Colors.WHITE,
-                                                            border_radius=12,
-                                                            padding=16,
-                                                            content=ft.Text(petition.body),
-                                                        ),
-                                                        ft.Text(
-                                                            "Attachments",
-                                                            size=18,
-                                                            weight=ft.FontWeight.W_600,
-                                                        ),
-                                                        ft.Column(
-                                                            spacing=8,
-                                                            controls=attachment_controls,
-                                                        ),
-                                                    ],
+                                        ft.Row(
+                                            wrap=True,
+                                            spacing=12,
+                                            controls=[
+                                                ft.Container(
+                                                    bgcolor=ft.Colors.BLACK,
+                                                    border_radius=16,
+                                                    padding=ft.padding.symmetric(
+                                                        horizontal=14,
+                                                        vertical=10,
+                                                    ),
+                                                    content=ft.Text(
+                                                        "Registered petition shown in A4-style layout",
+                                                        weight=ft.FontWeight.W_600,
+                                                        color=ft.Colors.WHITE,
+                                                    ),
                                                 ),
-                                            ),
+                                                ft.ElevatedButton(
+                                                    "Download A4 PDF",
+                                                    icon=ft.Icons.DOWNLOAD_OUTLINED,
+                                                    on_click=export_registered_petition,
+                                                ),
+                                            ],
+                                        ),
+                                        ft.Container(
+                                            alignment=ft.alignment.top_center,
+                                            content=a4_paper,
                                         ),
                                     ],
                                 ),
