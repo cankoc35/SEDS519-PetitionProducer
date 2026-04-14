@@ -1,11 +1,13 @@
 {
-  "title": "Course Exemption Request TEST ",
-  "body": "I respectfully request exemption from the specified course based on my previous academic background.\n\nTEST course request ",
-  "petitioner": "Mustafacan",
-  "created_by": "Mustafacan",
+  "title": "Official Document Request TEST ",
+  "body": "I respectfully request the preparation and delivery of the official document stated in this petition.",
+  "petitioner": "TEST JPEG",
+  "created_by": "TEST ",
   "status": "registered",
   "attachment_required": false,
-  "attachments": [],
-  "petition_type": "academic",
-  "receiver": "Dean"
+  "attachments": [
+    "/Users/cankoc/Desktop/IMG_2422.JPG"
+  ],
+  "petition_type": "administrative",
+  "receiver": "Administrative Office"
 }

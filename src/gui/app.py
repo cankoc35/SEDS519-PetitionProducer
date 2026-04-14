@@ -31,6 +31,7 @@ class PetitionApp:
         built_in_template_catalog = get_template_catalog()
         current_petition: dict[str, object | None] = {"value": None}
         current_template_title: dict[str, str] = {"value": "No template selected."}
+        current_saved_petition: dict[str, object | None] = {"value": None}
 
         page.title = "Petition Producer"
         page.theme_mode = ft.ThemeMode.LIGHT
@@ -233,9 +234,19 @@ class PetitionApp:
                     weight=ft.FontWeight.W_600,
                     color=ft.Colors.BLUE_GREY_700,
                 ),
+                data=petition,
+                on_click=lambda event: open_saved_petition(event),
                 bgcolor=ft.Colors.WHITE,
                 shape=ft.RoundedRectangleBorder(radius=12),
             )
+
+        def open_saved_petition(event: ft.ControlEvent) -> None:
+            petition = getattr(event.control, "data", None)
+            if petition is None:
+                show_snack("Saved petition could not be opened.")
+                return
+            current_saved_petition["value"] = petition
+            page.go("/saved")
 
         type_filter = ft.Dropdown(
             label="Type Filter",
@@ -534,6 +545,107 @@ class PetitionApp:
                                                                     on_click=lambda _: save_current_petition("registered"),
                                                                 ),
                                                             ],
+                                                        ),
+                                                    ],
+                                                ),
+                                            ),
+                                        ),
+                                    ],
+                                ),
+                            )
+                        ],
+                    )
+                )
+
+            if page.route == "/saved":
+                petition = current_saved_petition["value"]
+                if petition is None:
+                    page.go("/")
+                    return
+
+                petition_type = getattr(petition, "petition_type", "petition").title()
+                receiver = getattr(petition, "receiver", "-")
+                attachments = getattr(petition, "attachments", [])
+                attachment_controls = (
+                    [
+                        ft.Container(
+                            bgcolor=ft.Colors.WHITE,
+                            border_radius=12,
+                            padding=12,
+                            content=ft.Text(Path(str(attachment)).name),
+                        )
+                        for attachment in attachments
+                    ]
+                    if attachments
+                    else [
+                        ft.Container(
+                            bgcolor=ft.Colors.WHITE,
+                            border_radius=12,
+                            padding=12,
+                            content=ft.Text("No attachments uploaded."),
+                        )
+                    ]
+                )
+
+                page.views.append(
+                    ft.View(
+                        route="/saved",
+                        bgcolor=ft.Colors.BLUE_GREY_50,
+                        scroll=ft.ScrollMode.AUTO,
+                        appbar=ft.AppBar(
+                            leading=ft.IconButton(
+                                icon=ft.Icons.ARROW_BACK,
+                                on_click=lambda _: page.go("/"),
+                            ),
+                            title=ft.Text("Saved Petition Details"),
+                            bgcolor=ft.Colors.WHITE,
+                        ),
+                        controls=[
+                            ft.Container(
+                                padding=24,
+                                content=ft.Column(
+                                    spacing=16,
+                                    controls=[
+                                        ft.Text(
+                                            petition.title,
+                                            size=28,
+                                            weight=ft.FontWeight.W_700,
+                                        ),
+                                        ft.Card(
+                                            elevation=1,
+                                            content=ft.Container(
+                                                padding=20,
+                                                content=ft.Column(
+                                                    spacing=14,
+                                                    controls=[
+                                                        ft.Text(f"Type: {petition_type}"),
+                                                        ft.Text(f"Status: {petition.status.title()}"),
+                                                        ft.Text(
+                                                            f"Petitioner: {petition.petitioner or '-'}"
+                                                        ),
+                                                        ft.Text(f"Receiver: {receiver}"),
+                                                        ft.Text(
+                                                            f"Created By: {petition.created_by or '-'}"
+                                                        ),
+                                                        ft.Text(
+                                                            "Body",
+                                                            size=18,
+                                                            weight=ft.FontWeight.W_600,
+                                                        ),
+                                                        ft.Container(
+                                                            bgcolor=ft.Colors.WHITE,
+                                                            border_radius=12,
+                                                            padding=16,
+                                                            content=ft.Text(petition.body),
+                                                        ),
+                                                        ft.Text(
+                                                            "Attachments",
+                                                            size=18,
+                                                            weight=ft.FontWeight.W_600,
+                                                        ),
+                                                        ft.Column(
+                                                            spacing=8,
+                                                            controls=attachment_controls,
                                                         ),
                                                     ],
                                                 ),

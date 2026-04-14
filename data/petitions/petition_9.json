@@ -1,12 +1,12 @@
 {
-  "title": "Internship Approval Request",
-  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
-  "petitioner": "Can Koc",
-  "created_by": "Can Koc",
-  "status": "registered",
-  "attachment_required": true,
+  "title": "Course Exemption Request",
+  "body": "I request exemption from the introductory programming course.",
+  "petitioner": "Ayse Yilmaz",
+  "created_by": "ayse",
+  "status": "draft",
+  "attachment_required": false,
   "attachments": [
-    "/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/week1/CENG211_20_Object Oriented Design To Present.pdf"
+    "medical_report.pdf"
   ],
   "petition_type": "academic",
   "receiver": "Dean"

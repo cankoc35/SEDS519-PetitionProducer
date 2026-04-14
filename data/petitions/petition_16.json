@@ -1,12 +1,12 @@
 {
-  "title": "test",
-  "body": "test",
-  "petitioner": "test",
-  "created_by": "test",
+  "title": "Internship Approval Request",
+  "body": "I respectfully request approval for my internship process and the evaluation of the attached internship information.",
+  "petitioner": "Can Koc",
+  "created_by": "Can Koc",
   "status": "registered",
-  "attachment_required": false,
+  "attachment_required": true,
   "attachments": [
-    "/Users/cankoc/Desktop/Screenshot 2026-04-12 at 23.23.21.png"
+    "/Users/cankoc/Desktop/masters/SEDS519-DesignPatterns/week1/CENG211_20_Object Oriented Design To Present.pdf"
   ],
   "petition_type": "academic",
   "receiver": "Dean"
